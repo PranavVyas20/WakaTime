@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.gradle.secrets)
     alias(libs.plugins.serialization)
 }
 
@@ -17,7 +18,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+//        buildConfigField("String", "WAKA_API_KEY", WAKA_API_KEY)
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     buildTypes {
@@ -36,6 +41,19 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+    buildFeatures {
+        viewBinding = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.10"
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
@@ -46,12 +64,38 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.retrofit)
-    implementation(libs.dagger.hilt)
-    ksp(libs.dagger.hilt.compiler)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.ui.test.junit4)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.kotlinx.serialization)
     implementation(libs.retrofit.converter)
     implementation(libs.okhttp)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.androidx.lifecycle.runtime)
+    implementation(libs.androidx.navigation)
+    implementation(libs.gson)
+    implementation(libs.gson.converter)
+    implementation(libs.androidx.glance)
+    implementation(libs.androidx.glance.m2)
+    implementation(libs.androidx.glance.m3)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // work manager
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.androidx.work)
+    implementation(libs.androidx.hilt.work)
+
+    // hilt
+    implementation(libs.dagger.hilt)
+    ksp(libs.dagger.hilt.compiler)
+    ksp(libs.androidx.hilt.compiler)
 }
