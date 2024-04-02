@@ -20,7 +20,7 @@ import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
-class WakaWorker @AssistedInject constructor(
+class WakaSyncWorker @AssistedInject constructor(
     private val wakaRepository: WakaRepository,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters
@@ -62,7 +62,7 @@ class WakaWorker @AssistedInject constructor(
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
 
-        private val periodicSyncRequest = PeriodicWorkRequestBuilder<WakaWorker>(repeatInterval = 15, TimeUnit.MINUTES)
+        private val periodicSyncRequest = PeriodicWorkRequestBuilder<WakaSyncWorker>(repeatInterval = 15, TimeUnit.MINUTES)
             .setInitialDelay(10, TimeUnit.SECONDS)
             .setConstraints(periodicSyncConstraints)
             .build()
