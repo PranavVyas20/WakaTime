@@ -1,16 +1,20 @@
 package com.example.wakatime.ui.widgets.glance
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.shape.CircleShape
+import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.ImageProvider
+import androidx.glance.action.ActionParameters
+import androidx.glance.action.clickable
+import androidx.glance.appwidget.CircularProgressIndicator
+import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.appWidgetBackground
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
@@ -29,9 +33,43 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
+import com.example.wakatime.R
 import com.example.wakatime.data.model.WakaEditorData
 import com.example.wakatime.data.model.WakaUserSummaryData
+import com.example.wakatime.workmanager.WakaRefreshWorker
 
+
+@Composable
+fun WakaGlanceWidgetLoadingUI() {
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .appWidgetBackground()
+            .background(GlanceTheme.colors.background)
+            .padding(12.dp)
+            .cornerRadius(20.dp),
+        contentAlignment = androidx.glance.layout.Alignment.Center
+    ) {
+        CircularProgressIndicator(color = ColorProvider(day = Color.Black, night = Color.White))
+    }
+}
+
+@Composable
+fun WakaGlanceWidgetErrorUI(errorMessage: String?) {
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .appWidgetBackground()
+            .background(GlanceTheme.colors.background)
+            .padding(12.dp)
+            .cornerRadius(20.dp),
+        contentAlignment = androidx.glance.layout.Alignment.Center
+    ) {
+        errorMessage?.let {
+            Text(text = it)
+        }
+    }
+}
 
 @Composable
 fun WakaGlanceWidgetUI(data: WakaUserSummaryData) {
@@ -47,10 +85,19 @@ fun WakaGlanceWidgetUI(data: WakaUserSummaryData) {
             .cornerRadius(20.dp)
     ) {
         Column(modifier = GlanceModifier.fillMaxSize()) {
-            Text(
-                text = "Screen time",
-                style = TextStyle(color = textColorProvider)
-            )
+            Row(modifier = GlanceModifier.fillMaxWidth()) {
+                Text(
+                    text = "Screen time",
+                    style = TextStyle(color = textColorProvider)
+                )
+                Box(modifier = GlanceModifier.defaultWeight()) {}
+                androidx.glance.Image(
+                    provider = ImageProvider(R.drawable.baseline_autorenew_24),
+                    contentDescription = "refresh_icon",
+                    modifier = GlanceModifier.clickable(actionRunCallback<RefreshAction>())
+                )
+            }
+
             Spacer(modifier = GlanceModifier.height(4.dp))
             Text(
                 text = "${data.totalHours}h ${data.totalMins}m",
@@ -67,6 +114,16 @@ fun WakaGlanceWidgetUI(data: WakaUserSummaryData) {
                 }
             }
         }
+    }
+}
+
+class RefreshAction : ActionCallback {
+    override suspend fun onAction(
+        context: Context,
+        glanceId: GlanceId,
+        parameters: ActionParameters
+    ) {
+        WakaRefreshWorker.start(context = context)
     }
 }
 

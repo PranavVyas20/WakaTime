@@ -25,12 +25,12 @@ object WakaGlanceWidget: GlanceAppWidget() {
 
             when(wakaState) {
                 is WakaUserSummaryResponseState.Error -> {
-                    Text(text = "${wakaState.message}")
+                    WakaGlanceWidgetErrorUI(errorMessage = wakaState.message)
                     Log.d("waka_tag", "error_state")
 
                 }
                 WakaUserSummaryResponseState.IsLoading -> {
-                    Text(text = "Loading")
+                    WakaGlanceWidgetLoadingUI()
                     Log.d("waka_tag", "loading_state")
 
                 }
