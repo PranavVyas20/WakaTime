@@ -1,8 +1,6 @@
 package com.example.wakatime.workmanager
 
 import android.content.Context
-import android.util.Log
-import androidx.glance.appwidget.updateAll
 import androidx.hilt.work.HiltWorker
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingWorkPolicy
@@ -10,11 +8,7 @@ import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
-import com.example.wakatime.data.model.toWakaUserSummaryData
 import com.example.wakatime.data.reposiitory.WakaRepository
-import com.example.wakatime.ui.widgets.glance.WakaGlanceStateDefinition
-import com.example.wakatime.ui.widgets.glance.WakaGlanceWidget
-import com.example.wakatime.ui.widgets.glance.WakaUserSummaryResponseState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 

@@ -2,15 +2,12 @@ package com.example.wakatime.ui.widgets.glance
 
 import android.content.Context
 import android.util.Log
-import androidx.datastore.preferences.core.intPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.glance.GlanceId
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.provideContent
 import androidx.glance.currentState
 import androidx.glance.state.GlanceStateDefinition
-import androidx.glance.text.Text
 
 object WakaGlanceWidget: GlanceAppWidget() {
 

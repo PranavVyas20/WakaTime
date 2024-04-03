@@ -1,7 +1,6 @@
 package com.example.wakatime.data.model
 
 import com.google.gson.annotations.SerializedName
-import kotlinx.serialization.Serializable
 
 
 data class WakaUserSummaryResponse(
