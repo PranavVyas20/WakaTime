@@ -11,6 +11,8 @@ import androidx.work.WorkerParameters
 import com.example.wakatime.data.reposiitory.WakaRepository
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.concurrent.TimeUnit
 
 @HiltWorker
@@ -19,35 +21,10 @@ class WakaSyncWorker @AssistedInject constructor(
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters
 ) : CoroutineWorker(appContext, params) {
-    override suspend fun doWork(): Result {
-        WakaGlanceStateDefinition
-            .getDataStore(applicationContext, WakaGlanceStateDefinition.fileName)
-            .updateData {
-                WakaUserSummaryResponseState.IsLoading
-            }
-        WakaGlanceWidget.updateAll(applicationContext)
-        wakaRepository.getWakaUserSummary()
-            .onSuccess {data ->
-                Log.d("waka_tag", "$data")
-                WakaGlanceStateDefinition
-                    .getDataStore(applicationContext, WakaGlanceStateDefinition.fileName)
-                    .updateData {
-                        WakaUserSummaryResponseState.Success(data.toWakaUserSummaryData())
-                    }
-                WakaGlanceWidget.updateAll(applicationContext)
-                return Result.success()
-            }
-            .onFailure {error ->
-                Log.d("waka_tag", "${error.message}")
-                WakaGlanceStateDefinition
-                    .getDataStore(applicationContext, WakaGlanceStateDefinition.fileName)
-                    .updateData {
-                        WakaUserSummaryResponseState.Error(error.message)
-                    }
-                WakaGlanceWidget.updateAll(applicationContext)
-            }
-        return Result.failure()
-    }
+    override suspend fun doWork() =
+        withContext(Dispatchers.IO) {
+            wakaRepository.getWakaUserSummaryForWidget(applicationContext)
+        }
 
     companion object {
         private const val periodicSync = "PeriodicSyncWorker"
