@@ -86,6 +86,7 @@ dependencies {
     implementation(libs.androidx.glance.m2)
     implementation(libs.androidx.glance.m3)
     implementation(libs.androidx.datastore)
+    implementation(libs.retrofit.converter.scalars)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
