@@ -36,7 +36,7 @@ class WakaRepository @Inject constructor(private val dataStoreManager: DataStore
      *           "&refresh_token=waka_ref_fOHbZzwGyIlE8qG0EoL1eJqrPNTsIxl3nnYb9QuU6KlSiPcLzLLWxCY9rf3MJVB7T9JqnJHPos4ArGIz&uid=e455d92f-0542-4e6f-9a59-26a7cd892d81" +
      *           "&token_type=bearer&expires_at=2025-04-08T13%3A31%3A08Z&expires_in=31536000&scope=")
      **/
-    private fun extractTokens(refreshTokenResponse: String): WakaAuthTokenData {
+     fun extractTokens(refreshTokenResponse: String): WakaAuthTokenData {
         val map = hashMapOf<String, String>()
         refreshTokenResponse.split("&").onEach { pair ->
             val key = pair.split("=")[0]

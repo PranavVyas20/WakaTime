@@ -13,6 +13,18 @@ class WakaViewModel @Inject constructor(
     private val wakaRepository: WakaRepository
 ) : ViewModel() {
 
+    fun extractAndSaveAuthDataInDataStore(overrideUrl: String) {
+        viewModelScope.launch {
+            val authTokenData =  wakaRepository.extractTokens(overrideUrl.substringAfter("#"))
+            wakaRepository.saveAuthTokenDataInDataStore(authTokenData)
+        }
+    }
+     fun getTokenFromDataStore(onAccessTokenRetrieved: (token: String?) -> Unit) {
+         viewModelScope.launch {
+            val token =  wakaRepository.getAccessTokenFromDataStore()
+             onAccessTokenRetrieved(token)
+         }
+     }
     fun getWakaUserSummary() {
         viewModelScope.launch {
             wakaRepository.getWakaUserSummary()
@@ -24,4 +36,18 @@ class WakaViewModel @Inject constructor(
                 }
         }
     }
+
+    fun getToken() {
+        viewModelScope.launch {
+            wakaRepository.getAuthTokenData().onSuccess {
+                Log.d("waka_time", "$it")
+
+            }.onFailure {
+                Log.d("waka_time", "${it.message}")
+
+            }
+        }
+    }
+
+
 }
