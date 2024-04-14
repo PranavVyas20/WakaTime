@@ -11,7 +11,7 @@ class WakaInterceptor @Inject constructor(private val sessionManagerProvider: Pr
     override fun intercept(chain: Interceptor.Chain) = runBlocking {
         // if the request is for refresh token, skip all the intercepting
         val originalRequest = chain.request()
-        if (chain.request().url.toString() == "") {
+        if (chain.request().url.toString() == "oauth/token") {
             return@runBlocking chain.proceed(originalRequest)
         }
 
@@ -36,9 +36,3 @@ class WakaInterceptor @Inject constructor(private val sessionManagerProvider: Pr
         chain.proceed(newRequest)
     }
 }
-//             interceptor<- retrofit <- api
-//                                        ^
-//                                        |
-// interceptor -> session manager -> repository -> api and datastore manager
-//
-//
