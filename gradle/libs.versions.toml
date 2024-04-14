@@ -25,13 +25,15 @@ gsonConverter = "2.9.0"
 gradleSecrets = "2.0.1"
 glance = "1.0.0"
 activityCompose = "1.8.2"
-composeBom = "2024.03.00"
+composeBom = "2024.04.00"
 androidxWork = "2.9.0"
 kotlinxCoroutinesPlayServices = "1.7.3"
 androidXHiltWork = "1.2.0"
 hiltWork = "1.2.0"
 dataStore = "1.0.0"
 scalarsConverter = "2.9.0"
+navigation = "2.7.7"
+lifecycleViewmodelCompose = "2.7.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -71,6 +73,9 @@ androidx-hilt-work = {group = "androidx.hilt", name = "hilt-work", version.ref =
 dagger-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 androidx-hilt-compiler = {group = "androidx.hilt", name = "hilt-compiler", version.ref = "hiltCompiler"}
 dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+gradle-secrets = {group = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", name = "secrets-gradle-plugin", version.ref = "gradleSecrets"}
+androidx-compose-navigation = {group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation"}
+androidx-compose-hilt-viewmodel = {group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
