@@ -1,38 +1,52 @@
 package com.example.wakatime.data.remote
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
+import okhttp3.Request
+import okhttp3.Response
 import javax.inject.Inject
 import javax.inject.Provider
 
 
 class WakaInterceptor @Inject constructor(private val sessionManagerProvider: Provider<WakaSessionManager>) :
     Interceptor {
-    override fun intercept(chain: Interceptor.Chain) = runBlocking {
-        // if the request is for refresh token, skip all the intercepting
+    private val sessionManager by lazy {
+        sessionManagerProvider.get()
+    }
+
+    override fun intercept(chain: Interceptor.Chain) = runBlocking(Dispatchers.IO) {
+        // if the request is for refresh token, skip intercepting
         val originalRequest = chain.request()
-        if (chain.request().url.toString() == "oauth/token") {
+        if (chain.request().url.toString().contains("oauth/token")) {
             return@runBlocking chain.proceed(originalRequest)
         }
+        val storedAccessToken = sessionManager.getAccessTokenFromDataStore()
 
-        val isAccessTokenExpired =
-            sessionManagerProvider.get().isAccessTokenExpired()
-
-        if (isAccessTokenExpired) {
-            val newAccessToken = sessionManagerProvider.get().getNewAuthTokenData()
-            newAccessToken?.let {
-                sessionManagerProvider.get().saveAuthTokenDataToDataStore(it)
-                val newRequest = originalRequest.newBuilder()
-                    .header("Authorization", "Bearer ${newAccessToken.accessToken}")
-                    .build()
-                chain.proceed(newRequest)
-            }
-        }
-        val savedAccessToken =
-            sessionManagerProvider.get().getAccessTokenFromDataStore()
         val newRequest = originalRequest.newBuilder()
-            .header("Authorization", "Bearer $savedAccessToken")
+            .header("Authorization", "Bearer $storedAccessToken")
             .build()
-        chain.proceed(newRequest)
+        val response = chain.proceed(newRequest)
+
+        // Auth token expired -> refetch the token -> save in datastore and make api call again
+        if (response.code == 401) {
+            return@runBlocking makeRefreshTokenCall(request = originalRequest, chain = chain)
+        }
+        return@runBlocking response
+    }
+
+    private suspend fun makeRefreshTokenCall(request: Request, chain: Interceptor.Chain): Response {
+        val newAccessToken = sessionManager.getNewAuthTokenData()
+        newAccessToken?.let {
+            sessionManager.saveAuthTokenDataToDataStore(it)
+            val newRequest = request.newBuilder()
+                .header("Authorization", "Bearer ${newAccessToken.accessToken}")
+                .build()
+            return chain.proceed(newRequest)
+        } ?: kotlin.run {
+            // incase the refresh token is also expired, then logout the user
+            sessionManager.logoutUser()
+            return chain.proceed(request)
+        }
     }
 }
