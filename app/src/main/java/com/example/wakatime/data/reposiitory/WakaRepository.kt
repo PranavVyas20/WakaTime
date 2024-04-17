@@ -16,7 +16,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class WakaRepository @Inject constructor(private val dataStoreManager: DataStoreManager, private val wakaApi: WakaApi) {
+class WakaRepository @Inject constructor(
+    private val dataStoreManager: DataStoreManager,
+    private val wakaApi: WakaApi
+) {
 
     suspend fun getAccessTokenFromDataStore() = dataStoreManager.getAccessTokenFromDataStore()
     suspend fun logoutUser() {
@@ -30,7 +33,10 @@ class WakaRepository @Inject constructor(private val dataStoreManager: DataStore
     }
 
     suspend fun saveAuthTokenDataInDataStore(data: WakaAuthTokenData) {
-        dataStoreManager.saveAuthTokenDataToDataStore(accessToken = data.accessToken, refreshToken = data.refreshToken, expiryDate = data.expiresAt)
+        dataStoreManager.saveAuthTokenDataToDataStore(
+            accessToken = data.accessToken,
+            refreshToken = data.refreshToken,
+        )
     }
 
     /**
@@ -53,7 +59,8 @@ class WakaRepository @Inject constructor(private val dataStoreManager: DataStore
     }
 
     suspend fun getAuthTokenData(): Result<WakaAuthTokenData> = runCatching {
-        wakaApi.getAuthToken().let(::extractTokens)
+        val refreshToken = dataStoreManager.getRefreshTokenFromDataStore()
+        wakaApi.getAuthToken(refreshToken = refreshToken ?: "").let(::extractTokens)
     }
 
 
