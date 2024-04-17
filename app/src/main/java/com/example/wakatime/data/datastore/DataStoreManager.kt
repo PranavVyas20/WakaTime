@@ -22,13 +22,15 @@ class DataStoreManager @Inject constructor(@ApplicationContext private val conte
         context.dataStore.edit { wakaDatastore ->
             wakaDatastore[WAKA_ACCESS_TOKEN] = accessToken
             wakaDatastore[WAKA_REFRESH_TOKEN] = refreshToken
-            expiryDate.replace("%", ":")
-            context.dataStore.edit { wakaDataStore ->
-                wakaDataStore[WAKA_ACCESS_TOKEN_EXPIRES_AT] = expiryDate
-            }
         }
     }
 
+    suspend fun removeAuthTokenDataFromDataStore() {
+        context.dataStore.edit { wakaDataStore ->
+            wakaDataStore.remove(WAKA_ACCESS_TOKEN)
+            wakaDataStore.remove(WAKA_REFRESH_TOKEN)
+        }
+    }
     suspend fun getRefreshTokenFromDataStore(): String? =
         context.dataStore.data.first()[WAKA_REFRESH_TOKEN]
 

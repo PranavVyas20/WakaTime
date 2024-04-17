@@ -19,8 +19,10 @@ import javax.inject.Singleton
 class WakaRepository @Inject constructor(private val dataStoreManager: DataStoreManager, private val wakaApi: WakaApi) {
 
     suspend fun getAccessTokenFromDataStore() = dataStoreManager.getAccessTokenFromDataStore()
-    suspend fun getRefreshTokenFromDataStore() = dataStoreManager.getRefreshTokenFromDataStore()
-    suspend fun getAccessTokenExpiryDateFromDataStore() = dataStoreManager.getAccessTokenExpiryDateFromDataStore()
+    suspend fun logoutUser() {
+        dataStoreManager.removeAuthTokenDataFromDataStore()
+    }
+
     suspend fun getWakaUserSummary(): Result<WakaUserSummaryResponse> {
         return runCatching {
             wakaApi.getWakaUserSummary()
