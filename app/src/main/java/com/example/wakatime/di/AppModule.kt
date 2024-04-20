@@ -1,10 +1,13 @@
 package com.example.wakatime.di
 
+import android.content.Context
+import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.example.wakatime.data.remote.WakaApi
 import com.example.wakatime.data.remote.WakaInterceptor
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -19,9 +22,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideWeatherApi(wakaInterceptor: WakaInterceptor): WakaApi {
+    fun provideWeatherApi(wakaInterceptor: WakaInterceptor, @ApplicationContext context: Context): WakaApi {
         val client = OkHttpClient.Builder()
             .addInterceptor(wakaInterceptor)
+            .addInterceptor(ChuckerInterceptor(context))
             .build()
         return Retrofit.Builder()
             .baseUrl("https://wakatime.com/")
