@@ -46,6 +46,8 @@ data class WakaEditor(
     val hours: Int? = null,
     @SerializedName("minutes")
     val minutes: Int? = null,
+    @SerializedName("seconds")
+    val seconds: Int? = null,
     @SerializedName("name")
     val name: String? = null,
     @SerializedName("percent")
@@ -77,8 +79,16 @@ fun WakaUserSummaryResponse.toWakaUserSummaryData(): WakaUserSummaryData = WakaU
 
 private fun WakaEditor.toWakaEditorData(): WakaEditorData = WakaEditorData(
     name = this.name?:"",
-    hours = convertSecondsToHoursAndMinutes(this.totalSeconds?:0f).first,
-    mins = convertSecondsToHoursAndMinutes(this.totalSeconds?:0f).second,
+    hours = this.hours?:0,
+    mins = this.minutes?:0,
+    seconds = this.seconds?:0,
+    percentage = this.percent?:0f,
+    primaryScreenTime = when {
+    hours != 0 -> "~${hours}h"
+    minutes != 0 -> "${minutes}m"
+    else -> "${seconds}s"
+}
+
 )
 
 private fun convertSecondsToHoursAndMinutes(totalSeconds: Float): Pair<Int, Int> {
