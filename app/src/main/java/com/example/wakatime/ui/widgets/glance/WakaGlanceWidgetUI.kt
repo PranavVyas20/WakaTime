@@ -253,6 +253,18 @@ fun test() {
     }
 }
 
+@Preview
+@Composable
+fun testB() {
+    androidx.compose.foundation.layout.Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(color = Color.Black)
+    ) {
+        
+    }
+}
+
 fun adjustWidthsToRow(percentages: List<Float>, rowWidth: Float): List<Float> {
     // Convert percentages to actual widths
     val widths = percentages.map { it * rowWidth / 100 }
@@ -278,7 +290,7 @@ fun adjustWidthsToRow(percentages: List<Float>, rowWidth: Float): List<Float> {
     val ratio = rowWidth / totalWidth
 
     // Adjust the widths proportionally based on the ratio
-     val list = transformedWidths.map { it * ratio }
+    val list = transformedWidths.map { it * ratio }
     Log.d("taggggg", list.toString())
     return list
 }

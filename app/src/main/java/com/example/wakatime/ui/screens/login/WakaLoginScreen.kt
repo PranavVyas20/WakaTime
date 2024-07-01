@@ -1,5 +1,6 @@
 package com.example.wakatime.ui.screens.login
 
+import android.graphics.Bitmap
 import android.util.Log
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -27,15 +28,25 @@ fun LoginWebView(onUrlOverride: (url: String) -> Unit) {
             ): Boolean {
                 val url = request?.url.toString()
                 Log.d("webview_tag", url)
-                onUrlOverride(url)
-                return true
+                if(url.contains("access_token")) {
+                    onUrlOverride(url)
+                    return true
+                }
+                return false
+            }
+
+            override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                super.onPageStarted(view, url, favicon)
+            }
+
+            override fun onPageFinished(view: WebView?, url: String?) {
+                super.onPageFinished(view, url)
             }
         }
     }
     AndroidView(
         factory = { context ->
             WebView(context).apply {
-                settings.javaScriptEnabled = true
                 this.webViewClient = webViewClient
                 settings.loadWithOverviewMode = true
                 settings.useWideViewPort = true
@@ -43,7 +54,7 @@ fun LoginWebView(onUrlOverride: (url: String) -> Unit) {
             }
         },
         update = { webView ->
-            webView.loadUrl("https://wakatime.com/oauth/authorize?client_id=IYe2gJjSAF0A388BRHIlZP2O&response_type=token&redirect_uri=https://www.youtube.com/")
+            webView.loadUrl("https://wakatime.com/oauth/authorize?client_id=tlndjGhJcjgjl41WpV5ptRsy&response_type=token&redirect_uri=https://www.youtube.com/&scope=read_summaries")
         }
     )
 }

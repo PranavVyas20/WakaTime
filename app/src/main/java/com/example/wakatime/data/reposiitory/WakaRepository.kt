@@ -45,6 +45,7 @@ class WakaRepository @Inject constructor(
      *           "&token_type=bearer&expires_at=2025-04-08T13%3A31%3A08Z&expires_in=31536000&scope=")
      **/
      fun extractTokens(refreshTokenResponse: String): WakaAuthTokenData {
+         Log.d("tagggg", refreshTokenResponse)
         val map = hashMapOf<String, String>()
         refreshTokenResponse.split("&").onEach { pair ->
             val key = pair.split("=")[0]
